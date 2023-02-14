@@ -33,27 +33,55 @@ function viewEmployees() {
   });
 }
 
-inquirer
-  .prompt([
+function addDepartment() {
+  inquirer.prompt([
     {
-      type: "list",
-      message: "What would you like to do?",
-      name: "choice",
-      choices: [
-        { name: "View all departments", value: "VIEW_DEPARTMENTS" },
-        { name: "View all roles", value: "VIEW_ROLES" },
-        { name: "View all employees", value: "VIEW_EMPLOYEES" },
-      ],
+      type: "input",
+      message: "What is the department name?",
+      name: "department",
     },
-  ])
-  .then((response) => {
-    if (response.choice === "VIEW_DEPARTMENTS") {
-      viewDepartments();
-    }
-    if (response.choice === "VIEW_ROLES") {
-      viewRoles();
-    }
-    if (response.choice === "VIEW_EMPLOYEES") {
-      viewEmployees();
-    }
+  ]);
+  db.query("INSERT INTO department (name) VALUES (department)", function (err, results) {
+    console.table(results);
+    console.log("Department added!");
   });
+}
+
+function anotherOne() {
+  inquirer
+    .prompt([
+      {
+        type: "list",
+        message: "What would you like to do?",
+        name: "choice",
+        choices: [
+          { name: "View all departments", value: "VIEW_DEPARTMENTS" },
+          { name: "View all roles", value: "VIEW_ROLES" },
+          { name: "View all employees", value: "VIEW_EMPLOYEES" },
+          { name: "Add Department", value: "ADD_DEPARTMENT" },
+          { name: "Exit?", value: "EXIT" },
+        ],
+      },
+    ])
+    .then((response) => {
+      if (response.choice === "VIEW_DEPARTMENTS") {
+        viewDepartments();
+      }
+      if (response.choice === "VIEW_ROLES") {
+        viewRoles();
+      }
+      if (response.choice === "VIEW_EMPLOYEES") {
+        viewEmployees();
+      }
+      if (response.choice === "ADD_DEPARTMENT") {
+        addDepartment();
+      }
+      if (response.choice === "EXIT") {
+        process.exit();
+      } else {
+        anotherOne();
+      }
+    });
+}
+
+anotherOne();
