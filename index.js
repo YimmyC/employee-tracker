@@ -48,6 +48,34 @@ function addDepartment() {
     });
 }
 
+function addRole() {
+  db.query("SELECT * FROM department", function (err, results) {
+    const departments = results.map((department) => ({ name: department.name, value: department.id }));
+    inquirer
+      .prompt([
+        {
+          message: "What is the title?",
+          name: "title",
+        },
+        {
+          message: "What is the salery?",
+          name: "salary",
+        },
+        {
+          type: "list",
+          message: "What department does the role belong to?",
+          name: "department_id",
+          choices: departments,
+        },
+      ])
+      .then((answer) => {
+        db.query("INSERT INTO role SET ?", answer, function (err, results) {
+          console.log("Role added!");
+        });
+      });
+  });
+}
+
 function anotherOne() {
   inquirer
     .prompt([
@@ -59,7 +87,8 @@ function anotherOne() {
           { name: "View all departments", value: "VIEW_DEPARTMENTS" },
           { name: "View all roles", value: "VIEW_ROLES" },
           { name: "View all employees", value: "VIEW_EMPLOYEES" },
-          { name: "Add Department", value: "ADD_DEPARTMENT" },
+          { name: "Add a Department", value: "ADD_DEPARTMENT" },
+          { name: "Add a Role", value: "ADD_ROLE" },
           { name: "Exit?", value: "EXIT" },
         ],
       },
@@ -76,7 +105,9 @@ function anotherOne() {
       }
       if (response.choice === "ADD_DEPARTMENT") {
         addDepartment();
-        console.log("Im in");
+      }
+      if (response.choice === "ADD_ROLE") {
+        addRole();
       }
       if (response.choice === "EXIT") {
         process.exit();
