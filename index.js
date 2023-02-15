@@ -34,17 +34,18 @@ function viewEmployees() {
 }
 
 function addDepartment() {
-  inquirer.prompt([
-    {
-      type: "input",
-      message: "What is the department name?",
-      name: "department",
-    },
-  ]);
-  db.query("INSERT INTO department (name) VALUES (department)", function (err, results) {
-    console.table(results);
-    console.log("Department added!");
-  });
+  inquirer
+    .prompt([
+      {
+        message: "What is the department name?",
+        name: "name",
+      },
+    ])
+    .then((answer) => {
+      db.query("INSERT INTO department SET ?", answer, function (err, results) {
+        console.log("Department added!");
+      });
+    });
 }
 
 function anotherOne() {
@@ -75,12 +76,14 @@ function anotherOne() {
       }
       if (response.choice === "ADD_DEPARTMENT") {
         addDepartment();
+        console.log("Im in");
       }
       if (response.choice === "EXIT") {
         process.exit();
-      } else {
-        anotherOne();
       }
+      // else {
+      //   anotherOne();
+      // }
     });
 }
 
