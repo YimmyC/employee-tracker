@@ -118,7 +118,7 @@ function addEmployee() {
 function updateEmployee() {
   db.query("SELECT * FROM employee", function (err, results) {
     const employees = results.map((employee) => ({ name: employee.first_name, value: employee.id }));
-    db.query("SELECT * FROM employee", function (err, results) {
+    db.query("SELECT * FROM role", function (err, results) {
       const roles = results.map((role) => ({ name: role.title, value: role.id }));
 
       inquirer
@@ -137,7 +137,8 @@ function updateEmployee() {
           },
         ])
         .then((answer) => {
-          db.query("UPDATE employee SET role_id = role_id WHERE id = id", answer, function (err, results) {
+          db.query("UPDATE employee SET role_id = :role_id WHERE id = :id", answer, function (err, results) {
+            console.log(answer);
             console.log("Employee Updated!");
           });
         });
