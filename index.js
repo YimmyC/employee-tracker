@@ -115,6 +115,36 @@ function addEmployee() {
   });
 }
 
+function updateEmployee() {
+  db.query("SELECT * FROM employee", function (err, results) {
+    const employees = results.map((employee) => ({ name: employee.first_name, value: employee.id }));
+    db.query("SELECT * FROM employee", function (err, results) {
+      const roles = results.map((role) => ({ name: role.title, value: role.id }));
+
+      inquirer
+        .prompt([
+          {
+            type: "list",
+            message: "Which employee would you like to update?",
+            name: "id",
+            choices: employees,
+          },
+          {
+            type: "list",
+            message: "What is their new role?",
+            name: "role_id",
+            choices: roles,
+          },
+        ])
+        .then((answer) => {
+          db.query("UPDATE employee SET role_id = role_id WHERE id = id", answer, function (err, results) {
+            console.log("Employee Updated!");
+          });
+        });
+    });
+  });
+}
+
 function anotherOne() {
   inquirer
     .prompt([
@@ -129,6 +159,7 @@ function anotherOne() {
           { name: "Add a Department", value: "ADD_DEPARTMENT" },
           { name: "Add a Role", value: "ADD_ROLE" },
           { name: "Add an Employee", value: "ADD_EMPLOYEE" },
+          { name: "Update Employee", value: "UPDATE_EMPLOYEE" },
           { name: "Exit?", value: "EXIT" },
         ],
       },
@@ -151,6 +182,9 @@ function anotherOne() {
       }
       if (response.choice === "ADD_EMPLOYEE") {
         addEmployee();
+      }
+      if (response.choice === "UPDATE_EMPLOYEE") {
+        updateEmployee();
       }
       if (response.choice === "EXIT") {
         process.exit();
