@@ -77,6 +77,44 @@ function addRole() {
   });
 }
 
+function addEmployee() {
+  db.query("SELECT * FROM role", function (err, results) {
+    const roles = results.map((role) => ({ name: role.title, value: role.id }));
+    db.query("SELECT * FROM employee", function (err, results) {
+      const managers = results.map((manager) => ({ name: manager.first_name + " " + manager.last_name, value: manager.id }));
+      managers.unshift({ name: "none", value: null });
+      inquirer
+        .prompt([
+          {
+            message: "What is their first name?",
+            name: "first_name",
+          },
+          {
+            message: "What is their last name?",
+            name: "last_name",
+          },
+          {
+            type: "list",
+            message: "What is their role?",
+            name: "role_id",
+            choices: roles,
+          },
+          {
+            type: "list",
+            message: "Who is their manager?",
+            name: "manager_id",
+            choices: managers,
+          },
+        ])
+        .then((answer) => {
+          db.query("INSERT INTO employee SET ?", answer, function (err, results) {
+            console.log("Employee added!");
+          });
+        });
+    });
+  });
+}
+
 function anotherOne() {
   inquirer
     .prompt([
@@ -90,6 +128,7 @@ function anotherOne() {
           { name: "View all employees", value: "VIEW_EMPLOYEES" },
           { name: "Add a Department", value: "ADD_DEPARTMENT" },
           { name: "Add a Role", value: "ADD_ROLE" },
+          { name: "Add an Employee", value: "ADD_EMPLOYEE" },
           { name: "Exit?", value: "EXIT" },
         ],
       },
@@ -109,6 +148,9 @@ function anotherOne() {
       }
       if (response.choice === "ADD_ROLE") {
         addRole();
+      }
+      if (response.choice === "ADD_EMPLOYEE") {
+        addEmployee();
       }
       if (response.choice === "EXIT") {
         process.exit();
