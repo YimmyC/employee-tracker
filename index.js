@@ -38,7 +38,7 @@ function addDepartment() {
     .prompt([
       {
         message: "What is the department name?",
-        name: "name",
+        name: "dept_name",
       },
     ])
     .then((answer) => {
